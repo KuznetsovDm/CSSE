@@ -58,18 +58,19 @@
                 <TextBlock Text="Zтек = " />
                 <TextBox Text="{Binding Path=ZCurrent, UpdateSourceTrigger=PropertyChanged}" />
 
-                <TextBox Text="{Binding Path=Value, UpdateSourceTrigger=PropertyChanged}"></TextBox>
+                <CheckBox IsChecked="{Binding Value}"></CheckBox>
             </StackPanel>
         </Border>
 
         <StackPanel Grid.Row="1" Grid.Column="1" MinWidth="400">
             <TextBlock Text="МОДЕЛЬ СТРОГАНИЯ" HorizontalAlignment="Center" />
-            <TextBlock Text="Horizontal"></TextBlock>
-            <TextBlock FontFamily="Courier New" Text="{Binding HorizontalSurface}">
-            </TextBlock>
-
+            
             <TextBlock Text="Vertical"></TextBlock>
             <TextBlock FontFamily="Courier New" Text="{Binding VerticalSurface}"></TextBlock>
+
+            <TextBlock Text="Horizontal"></TextBlock>
+            <TextBlock FontFamily="Courier New" Text="{Binding HorizontalSurface}"></TextBlock>
+
         </StackPanel>
 
         <TextBlock Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2">

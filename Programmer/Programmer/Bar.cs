@@ -1,34 +1,33 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Text;
+
+// ReSharper disable InconsistentNaming
 
 namespace Programmer
 {
 	public class Bar
 	{
 		private readonly bool[,,] _symbols;
-		private readonly char _symbol;
 
+		public int XLength => _symbols.GetLength(0);
+		public int YLength => _symbols.GetLength(1);
+		public int ZLength => _symbols.GetLength(2);
 
-		public Bar(int x, int y, int z, char symbol)
+		public Bar(int x, int y, int z)
 		{
 			_symbols = Initialize(x, y, z);
-			_symbol = symbol;
 		}
 
 		private bool[,,] Initialize(int x, int y, int z)
 		{
 			var symbols = new bool[x, y, z];
 
-			for (int i = 0; i < symbols.GetLength(0); i++)
+			for (var i = 0; i < symbols.GetLength(0); i++)
 			{
-				for (int j = 0; j < symbols.GetLength(1); j++)
+				for (var j = 0; j < symbols.GetLength(1); j++)
 				{
-					for (int k = 0; k < symbols.GetLength(2); k++)
+					for (var k = 0; k < symbols.GetLength(2); k++)
 					{
-						symbols[i, j, k] = i % 2 == 0;
+						symbols[i, j, k] = true;
 					}
 				}
 			}
@@ -36,15 +35,20 @@ namespace Programmer
 			return symbols;
 		}
 
-		public string GetHorizontalSurface(int z)
+		public string GetXYSurface(int x, int y, int z)
 		{
 			var builder = new StringBuilder();
 
-			for (int i = 0; i < _symbols.GetLength(0); i++)
+			var yLine = new string(' ', YLength + 1).Remove(y + 1, 1).Insert(y + 1, "y");
+			builder.AppendLine(yLine);
+
+			for (var i = 0; i < XLength; i++)
 			{
-				for (int j = 0; j < _symbols.GetLength(1); j++)
+				builder.Append(i == x ? 'x' : ' ');
+
+				for (var j = 0; j < YLength; j++)
 				{
-					builder.Append(_symbols[i, j, z] ? _symbol : ' ');
+					builder.Append(GetCharByZAndExist(z, _symbols[i, j, z]));
 				}
 
 				builder.AppendLine();
@@ -53,15 +57,20 @@ namespace Programmer
 			return builder.ToString();
 		}
 
-		public string GetVerticalSurfuce(int x)
+		public string GetZYSurface(int x, int y, int z)
 		{
 			var builder = new StringBuilder();
 
-			for (int j = 0; j < _symbols.GetLength(0); j++)
+			var yLine = new string(' ', YLength + 1).Remove(y + 1, 1).Insert(y + 1, "y");
+			builder.AppendLine(yLine);
+
+			for (var k = 0; k < ZLength; k++)
 			{
-				for (int k = 0; k < _symbols.GetLength(1); k++)
+				builder.Append(k == z ? 'z' : ' ');
+
+				for (var j = 0; j < YLength; j++)
 				{
-					builder.Append(_symbols[x, j, k] ? _symbol : ' ');
+					builder.Append(_symbols[x, j, k] ? '9' : '0' );
 				}
 
 				builder.AppendLine();
@@ -73,6 +82,16 @@ namespace Programmer
 		public void SetValue(int x, int y, int z, bool value = false)
 		{
 			_symbols[x, y, z] = value;
+		}
+
+		public bool GetValue(int x, int y, int z)
+		{
+			return _symbols[x, y, z];
+		}
+
+		private char GetCharByZAndExist(int z, bool exist)
+		{
+			return (ZLength - 1 - z - (exist ? 0 : 1)).ToString()[0];
 		}
 	}
 }
