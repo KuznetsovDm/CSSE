@@ -51,24 +51,25 @@
                     <TextBox Text="{Binding Path=TZad, UpdateSourceTrigger=PropertyChanged}" />
                 </UniformGrid>
                 <Border BorderThickness="1" BorderBrush="Black" />
-                <TextBlock>
-                    <Run Text="Xтек = " />
-                    <Run Text="{Binding Path=XCurrent, UpdateSourceTrigger=PropertyChanged}" />
-                </TextBlock>
-                <TextBlock>
-                    <Run Text="Yтек = " />
-                    <Run Text="{Binding Path=YCurrent, UpdateSourceTrigger=PropertyChanged}" />
-                </TextBlock>
-                <TextBlock>
-                    <Run Text="Zтек = " />
-                    <Run Text="{Binding Path=ZCurrent, UpdateSourceTrigger=PropertyChanged}" />
-                </TextBlock>
+                <TextBlock Text="Xтек = " />
+                <TextBox Text="{Binding Path=XCurrent, UpdateSourceTrigger=PropertyChanged}" />
+                <TextBlock Text="Yтек = " />
+                <TextBox Text="{Binding Path=YCurrent, UpdateSourceTrigger=PropertyChanged}" />
+                <TextBlock Text="Zтек = " />
+                <TextBox Text="{Binding Path=ZCurrent, UpdateSourceTrigger=PropertyChanged}" />
+
+                <TextBox Text="{Binding Path=Value, UpdateSourceTrigger=PropertyChanged}"></TextBox>
             </StackPanel>
         </Border>
 
         <StackPanel Grid.Row="1" Grid.Column="1" MinWidth="400">
             <TextBlock Text="МОДЕЛЬ СТРОГАНИЯ" HorizontalAlignment="Center" />
-            <TextBlock Text="ЖЖЖЖЖЖЖЖЖЖЖЖЖЖЖЖЖЖЖЖ" />
+            <TextBlock Text="Horizontal"></TextBlock>
+            <TextBlock FontFamily="Courier New" Text="{Binding HorizontalSurface}">
+            </TextBlock>
+
+            <TextBlock Text="Vertical"></TextBlock>
+            <TextBlock FontFamily="Courier New" Text="{Binding VerticalSurface}"></TextBlock>
         </StackPanel>
 
         <TextBlock Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2">

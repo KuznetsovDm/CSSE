@@ -14,8 +14,12 @@ namespace Programmer
         private int _yCurrent;
         private int _zCurrent;
 
+	    private readonly Bar _bar = new Bar(10, 10, 10 , 'Ж');
+	    private string _horizontalSurface;
+	    private string _verticalSurface;
+	    private bool _value;
 
-        public MainWindowViewModel()
+	    public MainWindowViewModel()
         {
             
         }
@@ -24,47 +28,84 @@ namespace Programmer
         public int XMax
         {
             get => _xMax;
-            set { SetField(ref _xMax, value); }
+            set => SetField(ref _xMax, value);
         }
 
         public int YMax
         {
             get => _yMax;
-            set { SetField(ref _yMax, value); }
+            set => SetField(ref _yMax, value);
         }
 
         public int ZMax
         {
             get => _zMax;
-            set { SetField(ref _zMax, value); }
+            set => SetField(ref _zMax, value);
         }
 
         public int TZad
         {
             get => _tZad;
-            set { SetField(ref _tZad, value); }
+            set => SetField(ref _tZad, value);
         }
 
         public int XCurrent
         {
-            get => _xCurrent;
-            set { SetField(ref _xCurrent, value); }
+	        get => _xCurrent;
+	        set
+	        {
+		        if (SetField(ref _xCurrent, value))
+			        VerticalSurface = _bar.GetVerticalSurfuce(value);
+	        }
         }
 
-        public int YCurrent
+	    public int YCurrent
         {
             get => _yCurrent;
-            set { SetField(ref _yCurrent, value); }
+            set => SetField(ref _yCurrent, value);
         }
 
         public int ZCurrent
         {
             get => _zCurrent;
-            set { SetField(ref _zCurrent, value); }
+	        set
+	        {
+		        if (SetField(ref _zCurrent, value))
+			        HorizontalSurface = _bar.GetHorizontalSurface(value);
+	        }
         }
 
+	    public string HorizontalSurface
+	    {
+		    get => _horizontalSurface;
+		    set { SetField(ref _horizontalSurface, value); }
+	    }
 
-        protected bool SetField<T>(ref T field, T value, [CallerMemberName]string propertyName = null)
+	    public string VerticalSurface
+		{
+			get => _verticalSurface;
+			set
+			{
+				SetField(ref _verticalSurface, value);
+			}
+		}
+
+	    public bool Value
+		{
+			get => _value;
+			set
+			{
+				if (SetField(ref _value, value))
+				{
+					_bar.SetValue(XCurrent, YCurrent, ZCurrent, value);
+
+					VerticalSurface = _bar.GetVerticalSurfuce(XCurrent);
+					HorizontalSurface = _bar.GetHorizontalSurface(ZCurrent);
+				}
+			}
+		}
+
+		protected bool SetField<T>(ref T field, T value, [CallerMemberName]string propertyName = null)
         {
             if (EqualityComparer<T>.Default.Equals(field, value))
                 return false;
