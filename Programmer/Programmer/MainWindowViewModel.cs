@@ -164,7 +164,7 @@ namespace Programmer
 
 		public void ProgrammatorTick(object e, EventArgs args)
 		{
-			var point = _programmator.Tick2();
+			var point = _programmator.TickVersion2();
 			UpdateSurfaces(point);
 			if (point != null)
 				_delete(point);
