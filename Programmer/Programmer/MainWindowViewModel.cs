@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
-using System.Windows;
 using System.Windows.Input;
+using System.Windows.Threading;
 using Prism.Commands;
 using Prism.Mvvm;
 
 namespace Programmer
 {
-    class MainWindowViewModel : BindableBase
+	internal class MainWindowViewModel : BindableBase
     {
         private int _xMax;
         private int _yMax;
@@ -18,44 +18,86 @@ namespace Programmer
         private int _yCurrent;
         private int _zCurrent;
 
-	    private readonly Bar _bar = new Bar(10, 10, 10);
-	    private string _horizontalSurface;
+	    private readonly Bar _bar;
+	    private readonly Programmator _programmator;
+		private string _horizontalSurface;
 	    private string _verticalSurface;
 	    private bool _value;
+	    private DispatcherTimer _timer;
 
 	    public MainWindowViewModel()
-        {
-			ClickCommand = new DelegateCommand(ChangeValue);   
-        }
+	    {
+		    _bar = new Bar(10, 10, 10);
+			_programmator = new Programmator(_bar);
+			TickCommand = new DelegateCommand(() => ProgrammatorTick(null, null));   
+			StartCommand = new DelegateCommand(Start);   
+		    StopCommand = new DelegateCommand(Stop);
+		}
 
-	    public ICommand ClickCommand
+	    public ICommand TickCommand
 	    {
 		    get;
 	    }
 
-		public void UpdateSurfaces()
+	    public ICommand StartCommand
 	    {
-		    VerticalSurface = _bar.GetZYSurface(XCurrent, YCurrent, ZCurrent);
-		    HorizontalSurface = _bar.GetXYSurface(XCurrent, YCurrent, ZCurrent);
+		    get;
+	    }
+
+	    public ICommand StopCommand
+	    {
+		    get;
+	    }
+
+		private void SetProgrammatorSettings()
+	    {
+			_programmator.Settings.XMax = XMax;
+			_programmator.Settings.YMax = YMax;
+			_programmator.Settings.ZMax = ZMax;
+		}
+
+		public void UpdateSurfaces(Point point = default(Point))
+	    {
+		    if (!point.Equals(default(Point)))
+		    {
+			    _xCurrent = point.X;
+			    _yCurrent = point.Y;
+			    _zCurrent = point.Z;
+			}
+
+		    VerticalSurface = _bar.GetZYSurface(_xCurrent, _yCurrent, _zCurrent);
+		    HorizontalSurface = _bar.GetXYSurface(_xCurrent, _yCurrent, _zCurrent);
 		}
 
         public int XMax
         {
-            get => _xMax;
-            set => SetField(ref _xMax, value);
+	        get => _xMax;
+	        set
+	        {
+		        if(SetField(ref _xMax, value))
+					SetProgrammatorSettings();
+	        }
         }
 
-        public int YMax
+	    public int YMax
         {
             get => _yMax;
-            set => SetField(ref _yMax, value);
-        }
+		    set
+		    {
+			    if (SetField(ref _yMax, value))
+				    SetProgrammatorSettings();
+		    }
+		}
 
         public int ZMax
         {
             get => _zMax;
-            set => SetField(ref _zMax, value);
-        }
+	        set
+	        {
+		        if (SetField(ref _zMax, value))
+			        SetProgrammatorSettings();
+	        }
+		}
 
         public int TZad
         {
@@ -118,9 +160,25 @@ namespace Programmer
 			}
 		}
 
-	    public void ChangeValue()
+	    public void ProgrammatorTick(object e, EventArgs args)
 	    {
-		    Value = !Value;
+			var point = _programmator.Tick();
+			UpdateSurfaces(point);
+	    }
+
+	    public void Start()
+	    {
+			if(TZad == 0) return;
+
+		    _timer = new DispatcherTimer();
+		    _timer.Tick += ProgrammatorTick;
+		    _timer.Interval = new TimeSpan(0, 0, 0, 0, TZad);
+		    _timer.Start();
+		}
+
+	    public void Stop()
+	    {
+			_timer.Stop();
 	    }
 
 		protected bool SetField<T>(ref T field, T value, [CallerMemberName]string propertyName = null)

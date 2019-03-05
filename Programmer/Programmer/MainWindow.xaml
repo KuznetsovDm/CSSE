@@ -59,6 +59,13 @@
                 <TextBox Text="{Binding Path=ZCurrent, UpdateSourceTrigger=PropertyChanged}" />
 
                 <CheckBox IsChecked="{Binding Value}"></CheckBox>
+                
+                <Button Command="{Binding TickCommand}">Tick</Button>
+
+                <Button Command="{Binding StartCommand}">Start</Button>
+
+                <Button Command="{Binding StopCommand}">Stop</Button>
+
             </StackPanel>
         </Border>
 
