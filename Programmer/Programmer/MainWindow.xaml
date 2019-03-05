@@ -4,9 +4,13 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Programmer"
+        xmlns:system="clr-namespace:System;assembly=mscorlib"
         mc:Ignorable="d" d:DataContext="{d:DesignInstance {x:Type local:MainWindowViewModel}}"
-        Title="MainWindow" SizeToContent="WidthAndHeight" MinHeight="260" MinWidth="600">
+        Title="MainWindow" SizeToContent="WidthAndHeight" MinHeight="260" MinWidth="600" Height="1192" Width="1874">
     <Window.Resources>
+        <local:ToVector3DConverter x:Key="Vector3DConverter" />
+        <local:ToPoint3DConverter x:Key="Point3DConverter" />
+        <local:CoefficientConverter x:Key="NegativeConverter" Coefficient="-1" />
         <Style TargetType="FrameworkElement">
             <Setter Property="Margin" Value="2" />
         </Style>
@@ -20,68 +24,178 @@
         </Style>
     </Window.Resources>
     <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto" />
-            <ColumnDefinition Width="*" />
-        </Grid.ColumnDefinitions>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-        </Grid.RowDefinitions>
-        <TextBlock Grid.ColumnSpan="2" HorizontalAlignment="Center" Text="МОДЕЛИРОВАНИЕ РАБОТЫ ПРОГРАММАТОРА" />
+        <Grid>
+            <Viewport3D x:Name="Viewport">
+                <Viewport3D.Camera>
+                    <!--<PerspectiveCamera x:Name="Camera" Position="0.2,0.5,5" LookDirection="-0.00,-0.00,-0.2" />-->
+                    <PerspectiveCamera x:Name="Camera">
+                        <PerspectiveCamera.Position>
+                            <MultiBinding Converter="{StaticResource Point3DConverter}">
+                                <Binding ElementName="CameraXpSlider" Path="Value" />
+                                <Binding ElementName="CameraYpSlider" Path="Value" />
+                                <Binding ElementName="CameraZpSlider" Path="Value" />
+                            </MultiBinding>
+                        </PerspectiveCamera.Position>
+                        <PerspectiveCamera.LookDirection>
+                            <MultiBinding Converter="{StaticResource Vector3DConverter}">
+                                <Binding ElementName="CameraX" Path="Value" />
+                                <Binding ElementName="CameraXpSlider" Path="Value" />
+                                <Binding ElementName="CameraY" Path="Value" />
+                                <Binding ElementName="CameraYpSlider" Path="Value" />
+                                <Binding ElementName="CameraZ" Path="Value" />
+                                <Binding ElementName="CameraZpSlider" Path="Value" />
+                            </MultiBinding>
+                        </PerspectiveCamera.LookDirection>
+                    </PerspectiveCamera>
+                </Viewport3D.Camera>
+                <Viewport3D.Children>
+                    <ModelVisual3D>
+                        <ModelVisual3D.Content>
+                            <DirectionalLight Color="White" Direction="-1,-1,-2" />
+                        </ModelVisual3D.Content>
+                    </ModelVisual3D>
+                    <ModelVisual3D x:Name="MainModel">
+                        <ModelVisual3D.Content>
+                            <GeometryModel3D>
+                                <GeometryModel3D.Geometry>
+                                    <MeshGeometry3D Positions="0,0,0 1,0,0 0,1,0 1,1,0 
+                                                           0,0,1 1,0,1 0,1,1 1,1,1"
+                                      TriangleIndices="0,2,1 1,2,3 0,4,2 2,4,6 
+                                                       0,1,4 1,5,4 1,7,5 1,3,7
+                                                       4,5,6 7,6,5 2,6,3 3,6,7"/>
+                                </GeometryModel3D.Geometry>
+                                <GeometryModel3D.Material>
+                                    <DiffuseMaterial Brush="Red" />
+                                </GeometryModel3D.Material>
+                            </GeometryModel3D>
+                        </ModelVisual3D.Content>
+                        <ModelVisual3D.Transform>
+                            <Transform3DGroup>
+                                <Transform3DGroup.Children>
+                                    <RotateTransform3D>
+                                        <RotateTransform3D.Rotation>
+                                            <AxisAngleRotation3D Axis="0 1 0" />
+                                        </RotateTransform3D.Rotation>
+                                    </RotateTransform3D>
+                                    <TranslateTransform3D OffsetX="{Binding ElementName=OffsetX, Path=Value}" 
+                                                      OffsetY="{Binding ElementName=OffsetY, Path=Value}" 
+                                                      OffsetZ="{Binding ElementName=OffsetZ, Path=Value}" />
+                                </Transform3DGroup.Children>
+                            </Transform3DGroup>
+                        </ModelVisual3D.Transform>
+                    </ModelVisual3D>
+                </Viewport3D.Children>
+            </Viewport3D>
+            <StackPanel Width="200" HorizontalAlignment="Left" VerticalAlignment="Bottom">
+                <UniformGrid Columns="2">
+                    <UniformGrid.Resources>
+                        <system:Double x:Key="MaxPValue">100</system:Double>
+                        <system:Double x:Key="MinPValue">-100</system:Double>
+                        <Style TargetType="{x:Type Slider}">
+                            <Setter Property="Minimum" Value="{StaticResource MinPValue}" />
+                            <Setter Property="Maximum" Value="{StaticResource MaxPValue}" />
+                            <Setter Property="Value" Value="0" />
+                            <Setter Property="IsSnapToTickEnabled" Value="True" />
+                            <Setter Property="TickFrequency" Value="5" />
+                        </Style>
+                    </UniformGrid.Resources>
+                    <TextBlock Text="{Binding ElementName=CameraXY, Path=Value}"/>
+                    <Slider x:Name="CameraXY" Value="0" Minimum="0" Maximum="6.26" ValueChanged="Camera_OnValueChanged" IsSnapToTickEnabled="False" />
+                    <TextBlock Text="{Binding ElementName=CameraYZ, Path=Value}"/>
+                    <Slider x:Name="CameraYZ" Value="0" Minimum="0" Maximum="6.26" ValueChanged="Camera_OnValueChanged" IsSnapToTickEnabled="False" />
+                    <TextBlock Text="{Binding ElementName=CameraR, Path=Value}"/>
+                    <Slider x:Name="CameraR" Value="10" Minimum="10" Maximum="100" ValueChanged="Camera_OnValueChanged" IsSnapToTickEnabled="False" />
+                    <TextBlock Text="{Binding ElementName=CameraXpSlider, Path=Value}"/>
+                    <Slider x:Name="CameraXpSlider" ToolTip="x position" />
+                    <TextBlock Text="{Binding ElementName=CameraYpSlider, Path=Value}"/>
+                    <Slider x:Name="CameraYpSlider" ToolTip="y position" />
+                    <TextBlock Text="{Binding ElementName=CameraZpSlider, Path=Value}"/>
+                    <Slider x:Name="CameraZpSlider" Value="50" ToolTip="z position" />
+                    <TextBlock Text="{Binding ElementName=CameraX, Path=Value}"/>
+                    <Slider x:Name="CameraX" />
+                    <TextBlock Text="{Binding ElementName=CameraY, Path=Value}" />
+                    <Slider x:Name="CameraY" />
+                    <TextBlock Text="{Binding ElementName=CameraZ, Path=Value}" />
+                    <Slider x:Name="CameraZ" />
+                    <TextBlock Text="{Binding ElementName=OffsetX, Path=Value}" />
+                    <Slider x:Name="OffsetX" Minimum="-5" Maximum="10" Value="-5" IsSnapToTickEnabled="False" />
+                    <TextBlock Text="{Binding ElementName=OffsetY, Path=Value}"/>
+                    <Slider x:Name="OffsetY" Minimum="-5" Maximum="10" Value="-5" IsSnapToTickEnabled="False" />
+                    <TextBlock Text="{Binding ElementName=OffsetZ, Path=Value}"/>
+                    <Slider x:Name="OffsetZ" Minimum="-5" Maximum="10" Value="-5" IsSnapToTickEnabled="False" />
+                </UniformGrid>
+                <StackPanel>
+                    <TextBox x:Name="XCoord" />
+                    <TextBox x:Name="YCoord" />
+                    <TextBox x:Name="ZCoord" />
+                    <Button Content="destroy" Click="ButtonBase_OnClick" />
+                </StackPanel>
+            </StackPanel>
+        </Grid>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <TextBlock Grid.ColumnSpan="2" HorizontalAlignment="Center" Text="МОДЕЛИРОВАНИЕ РАБОТЫ ПРОГРАММАТОРА" />
 
-        <Border Grid.Row="1" Grid.Column="0" Margin="5" Padding="5" BorderBrush="Black" BorderThickness="2">
-            <StackPanel>
-                <TextBlock>
+            <Border Grid.Row="1" Grid.Column="0" Margin="5" Padding="5" BorderBrush="Black" BorderThickness="2">
+                <StackPanel>
+                    <TextBlock>
                     <Run Text="РЕЖИМ: " />
                     <Run Text="ручной" />
-                </TextBlock>
-                <TextBlock HorizontalAlignment="Center">
+                    </TextBlock>
+                    <TextBlock HorizontalAlignment="Center">
                     <Run Text="НАСТРОЙКИ: " />
-                </TextBlock>
-                <UniformGrid Columns="2" HorizontalAlignment="Left">
-                    <TextBlock Text="XMAX(от 3 до 20) = " />
-                    <TextBox Text="{Binding Path=XMax, UpdateSourceTrigger=PropertyChanged}" />
-                    <TextBlock Text="YMAX(от 1 до 4) = " />
-                    <TextBox Text="{Binding Path=YMax, UpdateSourceTrigger=PropertyChanged}" />
-                    <TextBlock Text="ZMAX(от 1 до 2) = " />
-                    <TextBox Text="{Binding Path=ZMax, UpdateSourceTrigger=PropertyChanged}" />
-                    <TextBlock Text="TZAD(от 1 до 30000) = " />
-                    <TextBox Text="{Binding Path=TZad, UpdateSourceTrigger=PropertyChanged}" />
-                </UniformGrid>
-                <Border BorderThickness="1" BorderBrush="Black" />
-                <TextBlock Text="Xтек = " />
-                <TextBox Text="{Binding Path=XCurrent, UpdateSourceTrigger=PropertyChanged}" />
-                <TextBlock Text="Yтек = " />
-                <TextBox Text="{Binding Path=YCurrent, UpdateSourceTrigger=PropertyChanged}" />
-                <TextBlock Text="Zтек = " />
-                <TextBox Text="{Binding Path=ZCurrent, UpdateSourceTrigger=PropertyChanged}" />
+                    </TextBlock>
+                    <UniformGrid Columns="2" HorizontalAlignment="Left">
+                        <TextBlock Text="XMAX(от 3 до 20) = " />
+                        <TextBox Text="{Binding Path=XMax, UpdateSourceTrigger=PropertyChanged}" />
+                        <TextBlock Text="YMAX(от 1 до 4) = " />
+                        <TextBox Text="{Binding Path=YMax, UpdateSourceTrigger=PropertyChanged}" />
+                        <TextBlock Text="ZMAX(от 1 до 2) = " />
+                        <TextBox Text="{Binding Path=ZMax, UpdateSourceTrigger=PropertyChanged}" />
+                        <TextBlock Text="TZAD(от 1 до 30000) = " />
+                        <TextBox Text="{Binding Path=TZad, UpdateSourceTrigger=PropertyChanged}" />
+                    </UniformGrid>
+                    <Border BorderThickness="1" BorderBrush="Black" />
+                    <TextBlock Text="Xтек = " />
+                    <TextBox Text="{Binding Path=XCurrent, UpdateSourceTrigger=PropertyChanged}" />
+                    <TextBlock Text="Yтек = " />
+                    <TextBox Text="{Binding Path=YCurrent, UpdateSourceTrigger=PropertyChanged}" />
+                    <TextBlock Text="Zтек = " />
+                    <TextBox Text="{Binding Path=ZCurrent, UpdateSourceTrigger=PropertyChanged}" />
 
-                <CheckBox IsChecked="{Binding Value}"></CheckBox>
-                
-                <Button Command="{Binding TickCommand}">Tick</Button>
+                    <CheckBox IsChecked="{Binding Value}"></CheckBox>
 
-                <Button Command="{Binding StartCommand}">Start</Button>
+                    <Button Command="{Binding TickCommand}">Tick</Button>
 
-                <Button Command="{Binding StopCommand}">Stop</Button>
+                    <Button Command="{Binding StartCommand}">Start</Button>
+
+                    <Button Command="{Binding StopCommand}">Stop</Button>
+
+                </StackPanel>
+            </Border>
+
+            <StackPanel Grid.Row="1" Grid.Column="1" MinWidth="400">
+                <TextBlock Text="МОДЕЛЬ СТРОГАНИЯ" HorizontalAlignment="Center" />
+
+                <TextBlock Text="Vertical"></TextBlock>
+                <TextBlock FontFamily="Courier New" Text="{Binding VerticalSurface}"></TextBlock>
+
+                <TextBlock Text="Horizontal"></TextBlock>
+                <TextBlock FontFamily="Courier New" Text="{Binding HorizontalSurface}"></TextBlock>
 
             </StackPanel>
-        </Border>
 
-        <StackPanel Grid.Row="1" Grid.Column="1" MinWidth="400">
-            <TextBlock Text="МОДЕЛЬ СТРОГАНИЯ" HorizontalAlignment="Center" />
-            
-            <TextBlock Text="Vertical"></TextBlock>
-            <TextBlock FontFamily="Courier New" Text="{Binding VerticalSurface}"></TextBlock>
-
-            <TextBlock Text="Horizontal"></TextBlock>
-            <TextBlock FontFamily="Courier New" Text="{Binding HorizontalSurface}"></TextBlock>
-
-        </StackPanel>
-
-        <TextBlock Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2">
-            Управляющие клавиши: A-автоформат, Р-ручной, Н-настройка, П-пуск, Ш-шаг, С- стоп, К-конец работы
-        </TextBlock>
+            <TextBlock Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2">
+                Управляющие клавиши: A-автоформат, Р-ручной, Н-настройка, П-пуск, Ш-шаг, С- стоп, К-конец работы
+            </TextBlock>
+        </Grid>
     </Grid>
 </Window>
