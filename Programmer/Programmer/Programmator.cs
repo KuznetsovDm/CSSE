@@ -1,4 +1,8 @@
-﻿namespace Programmer
+﻿using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace Programmer
 {
 	public class Programmator
 	{
@@ -16,14 +20,14 @@
 			Settings = settings ?? new ProgrammatorSettings();
 		}
 
+		private static int GetDelta(int current, int max, int barLength)
+		{
+			var left = barLength - current;
+			return max > left ? left : max;
+		}
+
 		public Point Tick()
 		{
-			int GetDelta(int current, int max, int barLength)
-			{
-				var left = barLength - current;
-				return max > left ? left : max;
-			}
-
 			var dx = GetDelta(_currentX, Settings.XMax, _bar.XLength);
 			var dy = GetDelta(_currentY, Settings.YMax, _bar.YLength);
 			var dz = GetDelta(_currentZ, Settings.ZMax, _bar.ZLength);
@@ -55,12 +59,55 @@
 			return new Point(_currentX, _currentY, _currentZ);
 		}
 
-		private static void Cut(Bar bar, int currentX, int currentY, int currentZ, int dx, int dy, int dz)
+		public Point TickVersion2()
+		{
+			//var deletedPoint = new Point(_currentX, _currentY, _currentZ);
+
+			var xMax = Settings.XMax == 0 ? _bar.XLength : Settings.XMax;
+			var yMax = Settings.YMax == 0 ? _bar.YLength : Settings.YMax;
+			var zMax = Settings.ZMax == 0 ? _bar.ZLength : Settings.ZMax;
+
+			var dx = GetDelta(_currentX, 1, xMax);
+			var dy = GetDelta(_currentY, 1, yMax);
+			var dz = GetDelta(_currentZ, 1, zMax);
+
+			var deletedPoint = Cut(_bar, _currentX, _currentY, _currentZ, dx, dy, dz).FirstOrDefault();
+
+			if (dy != 0)
+			{
+				_currentY += dy;
+			}
+			else if (dx != 0 && _currentX + dx < xMax)
+			{
+				_currentX += dx;
+				_currentY = 0;
+			}
+			else if (dz != 0 && _currentZ + dz < zMax)
+			{
+				_currentZ += dz;
+				_currentY = 0;
+				_currentX = 0;
+			}
+			else
+			{
+				_currentZ = 0;
+				_currentY = 0;
+				_currentX = 0;
+			}
+			
+			return deletedPoint;
+		}
+
+		private static IEnumerable<Point> Cut(Bar bar, int currentX, int currentY, int currentZ, int dx, int dy, int dz)
 		{
 			for (var i = currentX; i < currentX + dx; i++)
 				for (var j = currentY; j < currentY + dy; j++)
 					for (var k = currentZ; k < currentZ + dz; k++)
+					{
+						if (!bar.GetValue(i, j, k)) yield return null;
 						bar.SetValue(i, j, k, false);
+						yield return new Point(i, j, k);
+					}
 		}
 	}
 }

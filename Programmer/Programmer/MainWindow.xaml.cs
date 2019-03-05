@@ -30,9 +30,9 @@ namespace Programmer
         {
             InitializeComponent();
 
-            DataContext = new MainWindowViewModel();
+            DataContext = new MainWindowViewModel(Destroy);
 
-            Create(20, 10, 5);
+            Create(10, 10, 5);
         }
 
         private void Create(int x, int y, int z)
@@ -87,11 +87,11 @@ namespace Programmer
         }
 
 
-        private void Destroy(int x, int y, int z)
+        private void Destroy(Point point)
         {
-            if (x < 0 || x >= _models.GetLength(0) || y < 0 || y >= _models.GetLength(1) || z < 0 || z >= _models.GetLength(2))
+            if (point.X < 0 || point.X >= _models.GetLength(0) || point.Y < 0 || point.Y >= _models.GetLength(1) || point.Z < 0 || point.Z >= _models.GetLength(2))
                 return;
-            Viewport.Children.Remove(_models[x, y, z]);
+            Viewport.Children.Remove(_models[point.X, point.Y, point.Z]);
 
             var meshGeometry3d = new MeshGeometry3D()
             {
@@ -113,7 +113,7 @@ namespace Programmer
                     4,5,6, 7,6,5, 2,6,3, 3,6,7,
                 }
             };
-            var transform = _models[x, y, z].Transform as TranslateTransform3D;
+            var transform = _models[point.X, point.Y, point.Z].Transform as TranslateTransform3D;
 
             var material = new DiffuseMaterial(Brushes.Green);
             var geometryModel3D = new GeometryModel3D(meshGeometry3d, material);
@@ -144,7 +144,7 @@ namespace Programmer
         private void ButtonBase_OnClick(object sender, RoutedEventArgs e)
         {
             if (int.TryParse(XCoord.Text, out var x) && int.TryParse(YCoord.Text, out var y) && int.TryParse(ZCoord.Text, out var z))
-                Destroy(x, y, z);
+                Destroy(new Point(x, y, z));
         }
 
         private void Camera_OnValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)

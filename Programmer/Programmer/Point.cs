@@ -1,6 +1,6 @@
 ﻿namespace Programmer
 {
-	public struct Point
+	public class Point
 	{
 		public Point(int x, int y, int z)
 		{
