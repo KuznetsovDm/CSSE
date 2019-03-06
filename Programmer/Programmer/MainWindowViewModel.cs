@@ -10,10 +10,10 @@ namespace Programmer
 {
 	internal class MainWindowViewModel : BindableBase
 	{
-		private int _xMax;
-		private int _yMax;
-		private int _zMax;
-		private int _tZad;
+		private int _xMax = 10;
+		private int _yMax = 4;
+		private int _zMax = 2;
+		private int _tZad = 1000;
 		private int _xCurrent;
 		private int _yCurrent;
 		private int _zCurrent;
@@ -34,7 +34,9 @@ namespace Programmer
 			TickCommand = new DelegateCommand(() => ProgrammatorTick(null, null));
 			StartCommand = new DelegateCommand(Start);
 			StopCommand = new DelegateCommand(Stop);
-		}
+
+            SetProgrammatorSettings();
+        }
 
 		public ICommand TickCommand
 		{

@@ -25,6 +25,7 @@ namespace Programmer
     public partial class MainWindow : Window
     {
         private ModelVisual3D[,,] _models;
+        private const int _border = 2;
 
         public MainWindow()
         {
@@ -32,7 +33,7 @@ namespace Programmer
 
             DataContext = new MainWindowViewModel(Destroy);
 
-            Create(10, 10, 5);
+            Create(14, 14, 14);
         }
 
         private void Create(int x, int y, int z)
@@ -67,13 +68,13 @@ namespace Programmer
             _models = new ModelVisual3D[x, y, z];
 
             int i = 0, j, k;
-            for (double offsetX = 0; i < x; i++, offsetX += 1.5)
+            for (double offsetX = 0; i < x; i++, offsetX += 1.1)
             {
                 j = 0;
-                for (double offsetY = 0; j < y; j++, offsetY += 1.5)
+                for (double offsetY = 0; j < y; j++, offsetY += 1.1)
                 {
                     k = 0;
-                    for (double offsetZ = 0; k < z; k++, offsetZ += 1.5)
+                    for (double offsetZ = 0; k < z; k++, offsetZ -= 1.1)
                     {
                         _models[i, j, k] = new ModelVisual3D()
                         {
@@ -89,8 +90,14 @@ namespace Programmer
 
         private void Destroy(Point point)
         {
+            point = new Point(point.X + _border, point.Y + _border, point.Z);
             if (point.X < 0 || point.X >= _models.GetLength(0) || point.Y < 0 || point.Y >= _models.GetLength(1) || point.Z < 0 || point.Z >= _models.GetLength(2))
                 return;
+
+            OffsetX.Value = point.X;
+            OffsetY.Value = point.Y;
+            OffsetZ.Value = point.Z;
+
             Viewport.Children.Remove(_models[point.X, point.Y, point.Z]);
 
             var meshGeometry3d = new MeshGeometry3D()
@@ -147,15 +154,15 @@ namespace Programmer
                 Destroy(new Point(x, y, z));
         }
 
-        private void Camera_OnValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
-        {
-            if (CameraXpSlider == null)
-                return;
-            Console.WriteLine(CameraYZ.Value);
-            CameraXpSlider.Value = CameraR.Value * Math.Sin(CameraXY.Value) * Math.Cos(CameraYZ.Value);
-            CameraYpSlider.Value = CameraR.Value * Math.Sin(CameraXY.Value) * Math.Sin(CameraYZ.Value);
-            CameraZpSlider.Value = CameraR.Value * Math.Cos(CameraXY.Value);
-        }
+        //private void Camera_OnValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        //{
+        //    if (CameraXpSlider == null)
+        //        return;
+        //    Console.WriteLine(CameraYZ.Value);
+        //    CameraXpSlider.Value = CameraR.Value * Math.Sin(CameraXY.Value) * Math.Cos(CameraYZ.Value);
+        //    CameraYpSlider.Value = CameraR.Value * Math.Sin(CameraXY.Value) * Math.Sin(CameraYZ.Value);
+        //    CameraZpSlider.Value = CameraR.Value * Math.Cos(CameraXY.Value);
+        //}
     }
 
 
