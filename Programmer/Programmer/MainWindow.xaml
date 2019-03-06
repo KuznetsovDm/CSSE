@@ -173,17 +173,17 @@
                         <TextBox Text="{Binding Path=TZad, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding Path=ModeIsSettings}" />
                     </UniformGrid>
                     <Border BorderThickness="1" BorderBrush="Black" />
-                    <TextBlock>
-                        <Run Text="Xтек = " />
-                        <Run Text="{Binding Path=XCurrent}" />
+                    <TextBlock Text="{Binding XCurrent}">
+                        <!--<Run Text="Xтек = " />
+                        <Run Text="{Binding Path=XCurrent}" />-->
                     </TextBlock>
-                    <TextBlock>
-                        <Run Text="Yтек = " />
-                        <Run Text="{Binding Path=YCurrent}" />
+                    <TextBlock Text="{Binding YCurrent}">
+                        <!--<Run Text="Yтек = " />
+                        <Run Text="{Binding Path=YCurrent}" />-->
                     </TextBlock>
-                    <TextBlock>
-                        <Run Text="Zтек = " />
-                        <Run Text="{Binding Path=ZCurrent}" />
+                    <TextBlock Text="{Binding ZCurrent}">
+                        <!--<Run Text="Zтек = " />
+                        <Run Text="{Binding Path=ZCurrent}" />-->
                     </TextBlock>
 
                     <!--<CheckBox IsChecked="{Binding Value}"></CheckBox>-->

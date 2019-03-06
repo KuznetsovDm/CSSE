@@ -1,20 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
 using System.Windows.Media.Media3D;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using System.Windows.Threading;
 
 namespace Programmer
@@ -58,9 +50,9 @@ namespace Programmer
             {
                 Viewport.Children.Clear();
             }
-            var meshGeometry3d = new MeshGeometry3D()
+            var meshGeometry3d = new MeshGeometry3D
             {
-                Positions = new Point3DCollection()
+                Positions = new Point3DCollection
                 {
                     new Point3D(0,0,0),
                     new Point3D(1,0,0),
@@ -69,13 +61,13 @@ namespace Programmer
                     new Point3D(0,0,1),
                     new Point3D(1,0,1),
                     new Point3D(0,1,1),
-                    new Point3D(1,1,1),
+                    new Point3D(1,1,1)
                 },
-                TriangleIndices = new Int32Collection()
+                TriangleIndices = new Int32Collection
                 {
                     0,2,1, 1,2,3, 0,4,2, 2,4,6,
                     0,1,4, 1,5,4, 1,7,5, 1,3,7,
-                    4,5,6, 7,6,5, 2,6,3, 3,6,7,
+                    4,5,6, 7,6,5, 2,6,3, 3,6,7
                 }
             };
             var material = new DiffuseMaterial(Brushes.Blue);
@@ -92,10 +84,10 @@ namespace Programmer
                     k = 0;
                     for (double offsetZ = 0; k < z; k++, offsetZ -= 1.1)
                     {
-                        _models[i, j, k] = new ModelVisual3D()
+                        _models[i, j, k] = new ModelVisual3D
                         {
                             Content = geometryModel3D,
-                            Transform = new TranslateTransform3D(offsetX, offsetY, offsetZ),
+                            Transform = new TranslateTransform3D(offsetX, offsetY, offsetZ)
                         };
                         Viewport.Children.Add(_models[i, j, k]);
                     }
@@ -115,9 +107,9 @@ namespace Programmer
 
             Viewport.Children.Remove(_models[point.X, point.Y, point.Z]);
 
-            var meshGeometry3d = new MeshGeometry3D()
+            var meshGeometry3d = new MeshGeometry3D
             {
-                Positions = new Point3DCollection()
+                Positions = new Point3DCollection
                 {
                     new Point3D(0,0,0),
                     new Point3D(0.3,0,0),
@@ -126,13 +118,13 @@ namespace Programmer
                     new Point3D(0,0,0.3),
                     new Point3D(0.3,0,0.3),
                     new Point3D(0,0.3,0.3),
-                    new Point3D(0.3,0.3,0.3),
+                    new Point3D(0.3,0.3,0.3)
                 },
-                TriangleIndices = new Int32Collection()
+                TriangleIndices = new Int32Collection
                 {
                     0,2,1, 1,2,3, 0,4,2, 2,4,6,
                     0,1,4, 1,5,4, 1,7,5, 1,3,7,
-                    4,5,6, 7,6,5, 2,6,3, 3,6,7,
+                    4,5,6, 7,6,5, 2,6,3, 3,6,7
                 }
             };
             var transform = _models[point.X, point.Y, point.Z].Transform as TranslateTransform3D;
@@ -150,10 +142,10 @@ namespace Programmer
                     k = 0;
                     for (double offsetZ = 0; k < tempChildren.GetLength(2); k++, offsetZ += 0.35)
                     {
-                        tempChildren[i, j, k] = new ModelVisual3D()
+                        tempChildren[i, j, k] = new ModelVisual3D
                         {
                             Content = geometryModel3D,
-                            Transform = new TranslateTransform3D(offsetX + transform.OffsetX, offsetY + transform.OffsetY, offsetZ + transform.OffsetZ),
+                            Transform = new TranslateTransform3D(offsetX + transform.OffsetX, offsetY + transform.OffsetY, offsetZ + transform.OffsetZ)
                         };
                         Viewport.Children.Add(tempChildren[i, j, k]);
                     }
