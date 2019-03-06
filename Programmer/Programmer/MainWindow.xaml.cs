@@ -26,24 +26,29 @@ namespace Programmer
     {
         private ModelVisual3D[,,] _models;
         private readonly MainWindowViewModel _viewModel;
+        private ModelVisual3D _mainModel;
+        private ModelVisual3D _light;
         private const int _border = 2;
+        private double _coef;
 
         public MainWindow()
         {
             InitializeComponent();
+            _mainModel = MainModel;
+            _light = Light;
+
+            _coef = 1.0;
 
             _viewModel = new MainWindowViewModel(this);
 
             DataContext = _viewModel;
 
-            Start();
-
             PreviewKeyDown += OnPreviewKeyDown;
         }
 
-        public void Start()
+        public void Start(int x, int y, int z)
         {
-            Create(14, 14, 14);
+            Create(x, y, z);
         }
 
         private void OnPreviewKeyDown(object sender, KeyEventArgs e)
@@ -54,10 +59,9 @@ namespace Programmer
 
         private void Create(int x, int y, int z)
         {
-            if (_models != null)
-            {
-                Viewport.Children.Clear();
-            }
+            Viewport.Children.Clear();
+            Viewport.Children.Add(_mainModel);
+            Viewport.Children.Add(_light);
             var meshGeometry3d = new MeshGeometry3D()
             {
                 Positions = new Point3DCollection()
@@ -76,21 +80,36 @@ namespace Programmer
                     0,2,1, 1,2,3, 0,4,2, 2,4,6,
                     0,1,4, 1,5,4, 1,7,5, 1,3,7,
                     4,5,6, 7,6,5, 2,6,3, 3,6,7,
+                },
+                TextureCoordinates = new PointCollection()
+                {
+                    new System.Windows.Point(0, 1),
+                    new System.Windows.Point(1, 1),
+                    new System.Windows.Point(0, 0),
+                    new System.Windows.Point(1, 0),
+
+                    new System.Windows.Point(0, 1),
+                    new System.Windows.Point(1, 1),
+                    new System.Windows.Point(0, 0),
+                    new System.Windows.Point(1, 0),
+                    //0,1, 1,1 0,0 1,0
+                    //0,1 1,1 0,0 1,0
                 }
             };
-            var material = new DiffuseMaterial(Brushes.Blue);
+            //var material = new DiffuseMaterial(Brushes.Blue);
+            var material = new DiffuseMaterial(new ImageBrush(new BitmapImage(new Uri(@"../../images.jpg", UriKind.Relative))));
             var geometryModel3D = new GeometryModel3D(meshGeometry3d, material);
 
-            _models = new ModelVisual3D[x, y, z];
+            _models = new ModelVisual3D[x + _border * 2, y + _border * 2, z + 1];
 
             int i = 0, j, k;
-            for (double offsetX = 0; i < x; i++, offsetX += 1.1)
+            for (double offsetX = 0; i < x + _border * 2; i++, offsetX += _coef)
             {
                 j = 0;
-                for (double offsetY = 0; j < y; j++, offsetY += 1.1)
+                for (double offsetY = 0; j < y + _border * 2; j++, offsetY += _coef)
                 {
                     k = 0;
-                    for (double offsetZ = 0; k < z; k++, offsetZ -= 1.1)
+                    for (double offsetZ = 0; k < z + 1; k++, offsetZ -= _coef)
                     {
                         _models[i, j, k] = new ModelVisual3D()
                         {
@@ -109,9 +128,9 @@ namespace Programmer
             if (point.X < 0 || point.X >= _models.GetLength(0) || point.Y < 0 || point.Y >= _models.GetLength(1) || point.Z < 0 || point.Z >= _models.GetLength(2))
                 return;
 
-            OffsetX.Value = point.X * 1.1;
-            OffsetY.Value = point.Y * 1.1;
-            OffsetZ.Value = -point.Z * 1.1;
+            OffsetX.Value = point.X * _coef;
+            OffsetY.Value = point.Y * _coef;
+            OffsetZ.Value = -point.Z * _coef;
 
             Viewport.Children.Remove(_models[point.X, point.Y, point.Z]);
 

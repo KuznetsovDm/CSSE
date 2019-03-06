@@ -43,6 +43,7 @@ namespace Programmer
 			TickCommand = new DelegateCommand(() => ProgrammatorTick(null, null));
 			StartCommand = new DelegateCommand(Start);
 			StopCommand = new DelegateCommand(Stop);
+            view.Start(_xMax, _yMax, _zMax);
 
 			SetProgrammatorSettings();
 		}
@@ -202,7 +203,7 @@ namespace Programmer
 
 			if (tickData.Finished)
 			{
-				_timer.Stop();
+				_timer?.Stop();
 				_view.ShowMessageBox();
 				return;
 			}
@@ -267,7 +268,7 @@ namespace Programmer
                     if (_switch != Modes.Off)
                         break;
                     _bar.Restart();
-                    _view.Start();
+                    _view.Start(_xMax, _yMax, _zMax);
                     break;
             }
         }

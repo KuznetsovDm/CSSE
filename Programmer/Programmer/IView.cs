@@ -4,6 +4,6 @@
 	{
 		void Destroy(Point point);
 		void ShowMessageBox();
-        void Start();
+        void Start(int x, int y, int z);
     }
 }
