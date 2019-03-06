@@ -246,12 +246,16 @@ namespace Programmer
                 case Key.F:
                     if (_switch != Modes.Off)
                         break;
+                    if (_mode == Modes.Settings)
+                        Restart();
                     UpdateMax();
                     Mode = Modes.Auto;
                     break;
                 case Key.H:
                     if (_switch != Modes.Off)
                         break;
+                    if (_mode == Modes.Settings)
+                        Restart();
                     UpdateMax();
                     Mode = Modes.Hand;
                     break;
@@ -280,11 +284,16 @@ namespace Programmer
                 case Key.R:
                     if (_switch != Modes.Off)
                         break;
-                    _bar.Restart();
-					_programmator.Restart();
-                    _view.Start(_xMax, _yMax, _zMax);
+                    Restart();
                     break;
             }
+        }
+
+        private void Restart()
+        {
+            _bar.Restart();
+            _programmator.Restart();
+            _view.Start(_xMax, _yMax, _zMax);
         }
 
 		private static class Modes
