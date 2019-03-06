@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 
 namespace Programmer
@@ -59,9 +60,10 @@ namespace Programmer
 			return new Point(_currentX, _currentY, _currentZ);
 		}
 
-		public Point TickVersion2()
+		public TickData TickVersion2()
 		{
 			//var deletedPoint = new Point(_currentX, _currentY, _currentZ);
+			var tickData = new TickData();
 
 			var xMax = Settings.XMax == 0 ? _bar.XLength : Settings.XMax;
 			var yMax = Settings.YMax == 0 ? _bar.YLength : Settings.YMax;
@@ -71,7 +73,7 @@ namespace Programmer
 			var dy = GetDelta(_currentY, 1, yMax);
 			var dz = GetDelta(_currentZ, 1, zMax);
 
-			var deletedPoint = Cut(_bar, _currentX, _currentY, _currentZ, dx, dy, dz).FirstOrDefault();
+			tickData.DeletedPoint = Cut(_bar, _currentX, _currentY, _currentZ, dx, dy, dz).FirstOrDefault();
 
 			if (dy != 0)
 			{
@@ -93,9 +95,10 @@ namespace Programmer
 				_currentZ = 0;
 				_currentY = 0;
 				_currentX = 0;
+				tickData.Finished = true;
 			}
 			
-			return deletedPoint;
+			return tickData;
 		}
 
 		private static IEnumerable<Point> Cut(Bar bar, int currentX, int currentY, int currentZ, int dx, int dy, int dz)

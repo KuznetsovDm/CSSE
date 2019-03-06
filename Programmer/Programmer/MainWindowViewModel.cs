@@ -10,6 +10,10 @@ namespace Programmer
 {
 	internal class MainWindowViewModel : BindableBase
 	{
+		public const int XBarMax = 20;
+		public const int YBarMax = 4;
+		public const int ZBarMax = 2;
+
 		private int _xMax = 10;
 		private int _yMax = 4;
 		private int _zMax = 2;
@@ -18,25 +22,26 @@ namespace Programmer
 		private int _yCurrent;
 		private int _zCurrent;
 
-		private readonly Bar _bar;
+		private Bar _bar;
 		private readonly Programmator _programmator;
 		private string _horizontalSurface;
 		private string _verticalSurface;
 		private bool _value;
 		private DispatcherTimer _timer;
-		private readonly Action<Point> _delete;
 
-		public MainWindowViewModel(Action<Point> delete)
+		private readonly IView _view;
+
+		public MainWindowViewModel(IView view)
 		{
-			_delete = delete;
-			_bar = new Bar(10, 10, 10);
+			_view = view;
+			_bar = new Bar(XBarMax, YBarMax, ZBarMax);
 			_programmator = new Programmator(_bar);
 			TickCommand = new DelegateCommand(() => ProgrammatorTick(null, null));
 			StartCommand = new DelegateCommand(Start);
 			StopCommand = new DelegateCommand(Stop);
 
-            SetProgrammatorSettings();
-        }
+			SetProgrammatorSettings();
+		}
 
 		public ICommand TickCommand
 		{
@@ -78,6 +83,7 @@ namespace Programmer
 			get => _xMax;
 			set
 			{
+				if (value < 1 || value > XBarMax) return;
 				if (SetField(ref _xMax, value))
 					SetProgrammatorSettings();
 			}
@@ -88,6 +94,7 @@ namespace Programmer
 			get => _yMax;
 			set
 			{
+				if (value < 1 || value > YBarMax) return;
 				if (SetField(ref _yMax, value))
 					SetProgrammatorSettings();
 			}
@@ -98,11 +105,14 @@ namespace Programmer
 			get => _zMax;
 			set
 			{
+				if (value < 1 || value > ZBarMax) return;
+
 				if (SetField(ref _zMax, value))
 					SetProgrammatorSettings();
 			}
 		}
 
+		// ReSharper disable once InconsistentNaming
 		public int TZad
 		{
 			get => _tZad;
@@ -166,10 +176,18 @@ namespace Programmer
 
 		public void ProgrammatorTick(object e, EventArgs args)
 		{
-			var point = _programmator.TickVersion2();
-			UpdateSurfaces(point);
-			if (point != null)
-				_delete(point);
+			var tickData = _programmator.TickVersion2();
+
+			if (tickData.Finished)
+			{
+				_timer.Stop();
+				_view.ShowMessageBox();
+				return;
+			}
+
+			UpdateSurfaces(tickData.DeletedPoint);
+			if (tickData.DeletedPoint != null)
+				_view.Destroy(tickData.DeletedPoint);
 		}
 
 		public void Start()
@@ -187,12 +205,20 @@ namespace Programmer
 			_timer.Stop();
 		}
 
+		public void Restart()
+		{
+			_timer.Stop();
+			_bar = new Bar(XBarMax, YBarMax, ZBarMax);
+		}
+
 		protected bool SetField<T>(ref T field, T value, [CallerMemberName]string propertyName = null)
 		{
 			if (EqualityComparer<T>.Default.Equals(field, value))
 				return false;
 			field = value;
+#pragma warning disable 618
 			OnPropertyChanged(propertyName);
+#pragma warning restore 618
 			return true;
 		}
 	}
