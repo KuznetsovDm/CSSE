@@ -127,11 +127,11 @@
                 </UniformGrid>
                 <UniformGrid Columns="2" Visibility="Collapsed">
                     <TextBlock Text="{Binding ElementName=OffsetX, Path=Value}" />
-                    <Slider x:Name="OffsetX" Minimum="-5" Maximum="20" Value="-5" IsSnapToTickEnabled="False" />
+                    <Slider x:Name="OffsetX" Minimum="-5" Maximum="30" Value="-5" IsSnapToTickEnabled="False" />
                     <TextBlock Text="{Binding ElementName=OffsetY, Path=Value}"/>
-                    <Slider x:Name="OffsetY" Minimum="-5" Maximum="20" Value="-5" IsSnapToTickEnabled="False" />
+                    <Slider x:Name="OffsetY" Minimum="-5" Maximum="30" Value="-5" IsSnapToTickEnabled="False" />
                     <TextBlock Text="{Binding ElementName=OffsetZ, Path=Value}"/>
-                    <Slider x:Name="OffsetZ" Minimum="-5" Maximum="20" Value="-5" IsSnapToTickEnabled="False" />
+                    <Slider x:Name="OffsetZ" Minimum="-5" Maximum="30" Value="-5" IsSnapToTickEnabled="False" />
                 </UniformGrid>
                 <!--<StackPanel>
                     <TextBox x:Name="XCoord" />

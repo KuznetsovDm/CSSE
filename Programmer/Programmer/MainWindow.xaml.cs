@@ -39,7 +39,7 @@ namespace Programmer
 
         public void Start(int x, int y, int z)
         {
-            Create(x, y, z);
+            Create(20, 4, 2);
         }
 
         private void OnPreviewKeyDown(object sender, KeyEventArgs e)
