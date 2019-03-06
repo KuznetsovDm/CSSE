@@ -228,6 +228,16 @@ namespace Programmer
 			_timer.Stop();
 		}
 
+        private void UpdateMax()
+        {
+            _xMax = _programmator.Settings.XMax;
+            _yMax = _programmator.Settings.YMax;
+            _zMax = _programmator.Settings.ZMax;
+            RaisePropertyChanged(nameof(XMax));
+            RaisePropertyChanged(nameof(YMax));
+            RaisePropertyChanged(nameof(ZMax));
+        }
+
         public void OnKeyDown(Key key)
         {
             switch (key)
@@ -235,11 +245,13 @@ namespace Programmer
                 case Key.F:
                     if (_switch != Modes.Off)
                         break;
+                    UpdateMax();
                     Mode = Modes.Auto;
                     break;
                 case Key.H:
                     if (_switch != Modes.Off)
                         break;
+                    UpdateMax();
                     Mode = Modes.Hand;
                     break;
                 case Key.Y:

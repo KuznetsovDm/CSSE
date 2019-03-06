@@ -29,15 +29,13 @@ namespace Programmer
         private ModelVisual3D _mainModel;
         private ModelVisual3D _light;
         private const int _border = 2;
-        private double _coef;
+        private const double _coef = 1.0;
 
         public MainWindow()
         {
             InitializeComponent();
             _mainModel = MainModel;
             _light = Light;
-
-            _coef = 1.0;
 
             _viewModel = new MainWindowViewModel(this);
 
@@ -53,6 +51,8 @@ namespace Programmer
 
         private void OnPreviewKeyDown(object sender, KeyEventArgs e)
         {
+            if (e.Key < Key.A || e.Key > Key.Z)
+                return;
             e.Handled = true;
             _viewModel.OnKeyDown(e.Key);
         }
@@ -92,8 +92,6 @@ namespace Programmer
                     new System.Windows.Point(1, 1),
                     new System.Windows.Point(0, 0),
                     new System.Windows.Point(1, 0),
-                    //0,1, 1,1 0,0 1,0
-                    //0,1 1,1 0,0 1,0
                 }
             };
             //var material = new DiffuseMaterial(Brushes.Blue);
@@ -124,6 +122,7 @@ namespace Programmer
 
         public void Destroy(Point point)
         {
+            Console.WriteLine($"{point.X}, {point.Y}, {point.Z}");
             point = new Point(point.X + _border, point.Y + _border, point.Z);
             if (point.X < 0 || point.X >= _models.GetLength(0) || point.Y < 0 || point.Y >= _models.GetLength(1) || point.Z < 0 || point.Z >= _models.GetLength(2))
                 return;
@@ -131,6 +130,7 @@ namespace Programmer
             OffsetX.Value = point.X * _coef;
             OffsetY.Value = point.Y * _coef;
             OffsetZ.Value = -point.Z * _coef;
+            Console.WriteLine($"{OffsetX.Value}, {OffsetY.Value}, {OffsetZ.Value}");
 
             Viewport.Children.Remove(_models[point.X, point.Y, point.Z]);
 
@@ -152,11 +152,24 @@ namespace Programmer
                     0,2,1, 1,2,3, 0,4,2, 2,4,6,
                     0,1,4, 1,5,4, 1,7,5, 1,3,7,
                     4,5,6, 7,6,5, 2,6,3, 3,6,7,
+                },
+                TextureCoordinates = new PointCollection()
+                {
+                    new System.Windows.Point(0, 1),
+                    new System.Windows.Point(1, 1),
+                    new System.Windows.Point(0, 0),
+                    new System.Windows.Point(1, 0),
+
+                    new System.Windows.Point(0, 1),
+                    new System.Windows.Point(1, 1),
+                    new System.Windows.Point(0, 0),
+                    new System.Windows.Point(1, 0),
                 }
             };
             var transform = _models[point.X, point.Y, point.Z].Transform as TranslateTransform3D;
 
-            var material = new DiffuseMaterial(Brushes.Green);
+            //var material = new DiffuseMaterial(Brushes.Green);
+            var material = new DiffuseMaterial(new ImageBrush(new BitmapImage(new Uri(@"../../image2.jpg", UriKind.Relative))));
             var geometryModel3D = new GeometryModel3D(meshGeometry3d, material);
 
             var tempChildren = new ModelVisual3D[3, 3, 3];
