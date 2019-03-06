@@ -270,6 +270,7 @@ namespace Programmer
                     if (_switch != Modes.Off)
                         break;
                     _bar.Restart();
+					_programmator.Restart();
                     _view.Start(_xMax, _yMax, _zMax);
                     break;
             }
