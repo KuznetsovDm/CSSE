@@ -17,18 +17,17 @@ namespace Programmer
 		private int _xMax = 10;
 		private int _yMax = 4;
 		private int _zMax = 2;
-		private int _tZad = 1000;
+		private int _tZad = 250;
 		private int _xCurrent;
 		private int _yCurrent;
 		private int _zCurrent;
 
-		private Bar _bar;
+		private readonly Bar _bar;
 		private readonly Programmator _programmator;
 		private string _horizontalSurface;
 		private string _verticalSurface;
-		private bool _value;
+		//private bool _value;
 		private DispatcherTimer _timer;
-		private readonly Action<Point> _delete;
 		private string _mode;
 		private string _switch;
 		private readonly IView _view;
