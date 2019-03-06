@@ -62,7 +62,6 @@ namespace Programmer
 
 		public TickData TickVersion2()
 		{
-			//var deletedPoint = new Point(_currentX, _currentY, _currentZ);
 			var tickData = new TickData();
 
 			var xMax = Settings.XMax == 0 ? _bar.XLength : Settings.XMax;
@@ -75,14 +74,14 @@ namespace Programmer
 
 			tickData.DeletedPoint = Cut(_bar, _currentX, _currentY, _currentZ, dx, dy, dz).FirstOrDefault();
 
-			if (dy != 0)
-			{
-				_currentY += dy;
-			}
-			else if (dx != 0 && _currentX + dx < xMax)
+			if (dx != 0)
 			{
 				_currentX += dx;
-				_currentY = 0;
+			}
+			else if (dy != 0 && _currentY + dy < yMax)
+			{
+				_currentY += dy;
+				_currentX = 0;
 			}
 			else if (dz != 0 && _currentZ + dz < zMax)
 			{
@@ -99,6 +98,13 @@ namespace Programmer
 			}
 			
 			return tickData;
+		}
+
+		public void Restart()
+		{
+			_currentX = 0;
+			_currentY = 0;
+			_currentZ = 0;
 		}
 
 		private static IEnumerable<Point> Cut(Bar bar, int currentX, int currentY, int currentZ, int dx, int dy, int dz)

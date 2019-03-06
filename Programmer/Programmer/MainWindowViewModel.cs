@@ -29,17 +29,17 @@ namespace Programmer
 		private bool _value;
 		private DispatcherTimer _timer;
 		private readonly Action<Point> _delete;
-        private string _mode;
-        private string _switch;
-        private readonly IView _view;
+		private string _mode;
+		private string _switch;
+		private readonly IView _view;
 
 		public MainWindowViewModel(IView view)
 		{
 			_view = view;
 			_bar = new Bar(XBarMax, YBarMax, ZBarMax);
 			_programmator = new Programmator(_bar);
-            _mode = Modes.Settings;
-            _switch = Modes.Off;
+			_mode = Modes.Settings;
+			_switch = Modes.Off;
 			TickCommand = new DelegateCommand(() => ProgrammatorTick(null, null));
 			StartCommand = new DelegateCommand(Start);
 			StopCommand = new DelegateCommand(Stop);
@@ -72,13 +72,6 @@ namespace Programmer
 
 		public void UpdateSurfaces(Point point = null)
 		{
-			if (point != null)
-			{
-				_xCurrent = point.X;
-				_yCurrent = point.Y;
-				_zCurrent = point.Z;
-			}
-
 			VerticalSurface = _bar.GetZYSurface(_xCurrent, _yCurrent, _zCurrent);
 			HorizontalSurface = _bar.GetXYSurface(_xCurrent, _yCurrent, _zCurrent);
 		}
@@ -166,38 +159,38 @@ namespace Programmer
 			set => SetField(ref _verticalSurface, value);
 		}
 
-		public bool Value
+		//public bool Value
+		//{
+		//	get => _value = _bar.GetValue(XCurrent, YCurrent, ZCurrent);
+		//	set
+		//	{
+		//		if (SetField(ref _value, value))
+		//		{
+		//			_bar.SetValue(XCurrent, YCurrent, ZCurrent, value);
+		//			UpdateSurfaces();
+		//		}
+		//	}
+		//}
+
+		public string Mode
 		{
-			get => _value = _bar.GetValue(XCurrent, YCurrent, ZCurrent);
+			get => _mode;
 			set
 			{
-				if (SetField(ref _value, value))
-				{
-					_bar.SetValue(XCurrent, YCurrent, ZCurrent, value);
-					UpdateSurfaces();
-				}
+				if (SetField(ref _mode, value))
+					RaisePropertyChanged(nameof(ModeIsSettings));
 			}
 		}
 
-        public string Mode
-        {
-            get => _mode;
-            set
-            {
-                if (SetField(ref _mode, value))
-                    RaisePropertyChanged(nameof(ModeIsSettings));
-            }
-        }
+		public string Switch
+		{
+			get => _switch;
+			set { SetField(ref _switch, value); }
+		}
 
-        public string Switch
-        {
-            get => _switch;
-            set { SetField(ref _switch, value); }
-        }
+		public bool ModeIsSettings => Mode == Modes.Settings;
 
-        public bool ModeIsSettings => Mode == Modes.Settings;
-
-        public void ProgrammatorTick(object e, EventArgs args)
+		public void ProgrammatorTick(object e, EventArgs args)
 		{
 			var tickData = _programmator.TickVersion2();
 
@@ -208,9 +201,18 @@ namespace Programmer
 				return;
 			}
 
-			UpdateSurfaces(tickData.DeletedPoint);
-			if (tickData.DeletedPoint != null)
-				_view.Destroy(tickData.DeletedPoint);
+			var deletedPoint = tickData.DeletedPoint;
+
+			if (deletedPoint != null)
+			{
+				XCurrent = deletedPoint.X;
+				YCurrent = deletedPoint.Y;
+				ZCurrent = deletedPoint.Z;
+			}
+
+			UpdateSurfaces(deletedPoint);
+			if (deletedPoint != null)
+				_view.Destroy(deletedPoint);
 		}
 
 		public void Start()
@@ -280,21 +282,22 @@ namespace Programmer
                     if (_switch != Modes.Off)
                         break;
                     _bar.Restart();
+					_programmator.Restart();
                     _view.Start(_xMax, _yMax, _zMax);
                     break;
             }
         }
 
-        private static class Modes
-        {
-            public const string Settings = "Настройка";
-            public const string Hand = "Ручной";
-            public const string Auto = "Автоформат";
-            public const string Pause = "Остановка";
+		private static class Modes
+		{
+			public const string Settings = "Настройка";
+			public const string Hand = "Ручной";
+			public const string Auto = "Автоформат";
+			public const string Pause = "Остановка";
 
-            public const string On = "Включен";
-            public const string Off = "Выключен";
-        }
+			public const string On = "Включен";
+			public const string Off = "Выключен";
+		}
 
 		protected bool SetField<T>(ref T field, T value, [CallerMemberName]string propertyName = null)
 		{
