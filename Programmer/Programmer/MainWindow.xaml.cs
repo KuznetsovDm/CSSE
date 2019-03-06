@@ -25,15 +25,26 @@ namespace Programmer
     public partial class MainWindow : Window
     {
         private ModelVisual3D[,,] _models;
+        private readonly MainWindowViewModel _viewModel;
         private const int _border = 2;
 
         public MainWindow()
         {
             InitializeComponent();
 
-            DataContext = new MainWindowViewModel(Destroy);
+            _viewModel = new MainWindowViewModel(Destroy);
+
+            DataContext = _viewModel;
 
             Create(14, 14, 14);
+
+            PreviewKeyDown += OnPreviewKeyDown;
+        }
+
+        private void OnPreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            e.Handled = true;
+            _viewModel.OnKeyDown(e.Key);
         }
 
         private void Create(int x, int y, int z)
@@ -87,16 +98,15 @@ namespace Programmer
             }
         }
 
-
         private void Destroy(Point point)
         {
             point = new Point(point.X + _border, point.Y + _border, point.Z);
             if (point.X < 0 || point.X >= _models.GetLength(0) || point.Y < 0 || point.Y >= _models.GetLength(1) || point.Z < 0 || point.Z >= _models.GetLength(2))
                 return;
 
-            OffsetX.Value = point.X;
-            OffsetY.Value = point.Y;
-            OffsetZ.Value = point.Z;
+            OffsetX.Value = point.X * 1.1;
+            OffsetY.Value = point.Y * 1.1;
+            OffsetZ.Value = -point.Z * 1.1;
 
             Viewport.Children.Remove(_models[point.X, point.Y, point.Z]);
 
@@ -148,11 +158,11 @@ namespace Programmer
             new DestroyChildren(tempChildren, Dispatcher, Viewport);
         }
 
-        private void ButtonBase_OnClick(object sender, RoutedEventArgs e)
-        {
-            if (int.TryParse(XCoord.Text, out var x) && int.TryParse(YCoord.Text, out var y) && int.TryParse(ZCoord.Text, out var z))
-                Destroy(new Point(x, y, z));
-        }
+        //private void ButtonBase_OnClick(object sender, RoutedEventArgs e)
+        //{
+        //    if (int.TryParse(XCoord.Text, out var x) && int.TryParse(YCoord.Text, out var y) && int.TryParse(ZCoord.Text, out var z))
+        //        Destroy(new Point(x, y, z));
+        //}
 
         //private void Camera_OnValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         //{

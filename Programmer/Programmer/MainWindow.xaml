@@ -93,7 +93,7 @@
                     </ModelVisual3D>
                 </Viewport3D.Children>
             </Viewport3D>
-            <StackPanel Width="200" HorizontalAlignment="Left" VerticalAlignment="Bottom">
+            <StackPanel Width="200" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="0, 0, 0, 40">
                 <UniformGrid Columns="2">
                     <UniformGrid.Resources>
                         <system:Double x:Key="MaxPValue">100</system:Double>
@@ -131,12 +131,12 @@
                     <TextBlock Text="{Binding ElementName=OffsetZ, Path=Value}"/>
                     <Slider x:Name="OffsetZ" Minimum="-5" Maximum="10" Value="-5" IsSnapToTickEnabled="False" />
                 </UniformGrid>
-                <StackPanel>
+                <!--<StackPanel>
                     <TextBox x:Name="XCoord" />
                     <TextBox x:Name="YCoord" />
                     <TextBox x:Name="ZCoord" />
                     <Button Content="destroy" Click="ButtonBase_OnClick" />
-                </StackPanel>
+                </StackPanel>-->
             </StackPanel>
         </Grid>
         <Grid>
@@ -155,36 +155,42 @@
                 <StackPanel>
                     <TextBlock>
                     <Run Text="РЕЖИМ: " />
-                    <Run Text="ручной" />
+                    <Run Text="{Binding Path=Mode}" />
+                    <Run Text="," />
+                    <Run Text="{Binding Path=Switch}" />
                     </TextBlock>
                     <TextBlock HorizontalAlignment="Center">
                     <Run Text="НАСТРОЙКИ: " />
                     </TextBlock>
                     <UniformGrid Columns="2" HorizontalAlignment="Left">
                         <TextBlock Text="XMAX(от 3 до 20) = " />
-                        <TextBox Text="{Binding Path=XMax, UpdateSourceTrigger=PropertyChanged}" />
+                        <TextBox Text="{Binding Path=XMax, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding Path=ModeIsSettings}" />
                         <TextBlock Text="YMAX(от 1 до 4) = " />
-                        <TextBox Text="{Binding Path=YMax, UpdateSourceTrigger=PropertyChanged}" />
+                        <TextBox Text="{Binding Path=YMax, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding Path=ModeIsSettings}" />
                         <TextBlock Text="ZMAX(от 1 до 2) = " />
-                        <TextBox Text="{Binding Path=ZMax, UpdateSourceTrigger=PropertyChanged}" />
+                        <TextBox Text="{Binding Path=ZMax, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding Path=ModeIsSettings}" />
                         <TextBlock Text="TZAD(от 1 до 30000) = " />
-                        <TextBox Text="{Binding Path=TZad, UpdateSourceTrigger=PropertyChanged}" />
+                        <TextBox Text="{Binding Path=TZad, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding Path=ModeIsSettings}" />
                     </UniformGrid>
                     <Border BorderThickness="1" BorderBrush="Black" />
-                    <TextBlock Text="Xтек = " />
-                    <TextBox Text="{Binding Path=XCurrent, UpdateSourceTrigger=PropertyChanged}" />
-                    <TextBlock Text="Yтек = " />
-                    <TextBox Text="{Binding Path=YCurrent, UpdateSourceTrigger=PropertyChanged}" />
-                    <TextBlock Text="Zтек = " />
-                    <TextBox Text="{Binding Path=ZCurrent, UpdateSourceTrigger=PropertyChanged}" />
+                    <TextBlock>
+                        <Run Text="Xтек = " />
+                        <Run Text="{Binding Path=XCurrent}" />
+                    </TextBlock>
+                    <TextBlock>
+                        <Run Text="Yтек = " />
+                        <Run Text="{Binding Path=YCurrent}" />
+                    </TextBlock>
+                    <TextBlock>
+                        <Run Text="Zтек = " />
+                        <Run Text="{Binding Path=ZCurrent}" />
+                    </TextBlock>
 
-                    <CheckBox IsChecked="{Binding Value}"></CheckBox>
+                    <!--<CheckBox IsChecked="{Binding Value}"></CheckBox>-->
 
-                    <Button Command="{Binding TickCommand}">Tick</Button>
-
+                    <!--<Button Command="{Binding TickCommand}">Tick</Button>
                     <Button Command="{Binding StartCommand}">Start</Button>
-
-                    <Button Command="{Binding StopCommand}">Stop</Button>
+                    <Button Command="{Binding StopCommand}">Stop</Button>-->
 
                 </StackPanel>
             </Border>

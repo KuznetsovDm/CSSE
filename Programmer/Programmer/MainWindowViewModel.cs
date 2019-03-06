@@ -25,12 +25,16 @@ namespace Programmer
 		private bool _value;
 		private DispatcherTimer _timer;
 		private readonly Action<Point> _delete;
+        private string _mode;
+        private string _switch;
 
-		public MainWindowViewModel(Action<Point> delete)
+        public MainWindowViewModel(Action<Point> delete)
 		{
 			_delete = delete;
 			_bar = new Bar(10, 10, 10);
 			_programmator = new Programmator(_bar);
+            _mode = Modes.Settings;
+            _switch = Modes.Off;
 			TickCommand = new DelegateCommand(() => ProgrammatorTick(null, null));
 			StartCommand = new DelegateCommand(Start);
 			StopCommand = new DelegateCommand(Stop);
@@ -164,7 +168,25 @@ namespace Programmer
 			}
 		}
 
-		public void ProgrammatorTick(object e, EventArgs args)
+        public string Mode
+        {
+            get => _mode;
+            set
+            {
+                if (SetField(ref _mode, value))
+                    RaisePropertyChanged(nameof(ModeIsSettings));
+            }
+        }
+
+        public string Switch
+        {
+            get => _switch;
+            set { SetField(ref _switch, value); }
+        }
+
+        public bool ModeIsSettings => Mode == Modes.Settings;
+
+        public void ProgrammatorTick(object e, EventArgs args)
 		{
 			var point = _programmator.TickVersion2();
 			UpdateSurfaces(point);
@@ -186,6 +208,60 @@ namespace Programmer
 		{
 			_timer.Stop();
 		}
+
+        public void OnKeyDown(Key key)
+        {
+            switch (key)
+            {
+                case Key.F:
+                    if (_switch != Modes.Off)
+                        break;
+                    Mode = Modes.Auto;
+                    break;
+                case Key.H:
+                    if (_switch != Modes.Off)
+                        break;
+                    Mode = Modes.Hand;
+                    break;
+                case Key.Y:
+                    if (_switch != Modes.Off)
+                        break;
+                    Mode = Modes.Settings;
+                    break;
+                case Key.G:
+                    if (_mode != Modes.Auto || _switch != Modes.Off)
+                        break;
+                    Switch = Modes.On;
+                    Start();
+                    break;
+                case Key.I:
+                    if (_mode != Modes.Hand || _switch != Modes.Off)
+                        break;
+                    ProgrammatorTick(null, null);
+                    break;
+                case Key.C:
+                    if (_mode != Modes.Auto || _switch != Modes.On)
+                        break;
+                    Switch = Modes.Off;
+                    Stop();
+                    break;
+                case Key.R:
+                    if (_switch != Modes.Off)
+                        break;
+                    break;
+            }
+        }
+
+        private static class Modes
+        {
+            public const string Settings = "Настройка";
+            public const string Hand = "Ручной";
+            public const string Auto = "Автоформат";
+            public const string Pause = "Остановка";
+
+            public const string On = "Включен";
+            public const string Off = "Выключен";
+        }
 
 		protected bool SetField<T>(ref T field, T value, [CallerMemberName]string propertyName = null)
 		{
