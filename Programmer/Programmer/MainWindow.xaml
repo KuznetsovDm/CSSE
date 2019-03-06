@@ -49,7 +49,7 @@
                     </PerspectiveCamera>
                 </Viewport3D.Camera>
                 <Viewport3D.Children>
-                    <ModelVisual3D>
+                    <ModelVisual3D x:Name="Light">
                         <ModelVisual3D.Content>
                             <DirectionalLight Color="White" Direction="-1,-1,-2" />
                         </ModelVisual3D.Content>
@@ -124,6 +124,8 @@
                     <Slider x:Name="CameraY" Value="5" />
                     <TextBlock Text="{Binding ElementName=CameraZ, Path=Value}" />
                     <Slider x:Name="CameraZ" />
+                </UniformGrid>
+                <UniformGrid Columns="2" Visibility="Collapsed">
                     <TextBlock Text="{Binding ElementName=OffsetX, Path=Value}" />
                     <Slider x:Name="OffsetX" Minimum="-5" Maximum="10" Value="-5" IsSnapToTickEnabled="False" />
                     <TextBlock Text="{Binding ElementName=OffsetY, Path=Value}"/>

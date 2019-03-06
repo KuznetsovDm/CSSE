@@ -43,6 +43,7 @@ namespace Programmer
 			TickCommand = new DelegateCommand(() => ProgrammatorTick(null, null));
 			StartCommand = new DelegateCommand(Start);
 			StopCommand = new DelegateCommand(Stop);
+            view.Start(_xMax, _yMax, _zMax);
 
 			SetProgrammatorSettings();
 		}
@@ -229,51 +230,50 @@ namespace Programmer
 			_timer.Stop();
 		}
 
-		public void OnKeyDown(Key key)
-		{
-			switch (key)
-			{
-				case Key.F:
-					if (_switch != Modes.Off)
-						break;
-					Mode = Modes.Auto;
-					break;
-				case Key.H:
-					if (_switch != Modes.Off)
-						break;
-					Mode = Modes.Hand;
-					break;
-				case Key.Y:
-					if (_switch != Modes.Off)
-						break;
-					Mode = Modes.Settings;
-					break;
-				case Key.G:
-					if (_mode != Modes.Auto || _switch != Modes.Off)
-						break;
-					Switch = Modes.On;
-					Start();
-					break;
-				case Key.I:
-					if (_mode != Modes.Hand || _switch != Modes.Off)
-						break;
-					ProgrammatorTick(null, null);
-					break;
-				case Key.C:
-					if (_mode != Modes.Auto || _switch != Modes.On)
-						break;
-					Switch = Modes.Off;
-					Stop();
-					break;
-				case Key.R:
-					if (_switch != Modes.Off)
-						break;
-					_bar.Restart();
-					_programmator.Restart();
-					_view.Start();
-					break;
-			}
-		}
+        public void OnKeyDown(Key key)
+        {
+            switch (key)
+            {
+                case Key.F:
+                    if (_switch != Modes.Off)
+                        break;
+                    Mode = Modes.Auto;
+                    break;
+                case Key.H:
+                    if (_switch != Modes.Off)
+                        break;
+                    Mode = Modes.Hand;
+                    break;
+                case Key.Y:
+                    if (_switch != Modes.Off)
+                        break;
+                    Mode = Modes.Settings;
+                    break;
+                case Key.G:
+                    if (_mode != Modes.Auto || _switch != Modes.Off)
+                        break;
+                    Switch = Modes.On;
+                    Start();
+                    break;
+                case Key.I:
+                    if (_mode != Modes.Hand || _switch != Modes.Off)
+                        break;
+                    ProgrammatorTick(null, null);
+                    break;
+                case Key.C:
+                    if (_mode != Modes.Auto || _switch != Modes.On)
+                        break;
+                    Switch = Modes.Off;
+                    Stop();
+                    break;
+                case Key.R:
+                    if (_switch != Modes.Off)
+                        break;
+                    _bar.Restart();
+                    _view.Start(_xMax, _yMax, _zMax);
+                    break;
+            }
+        }
 
 		private static class Modes
 		{
