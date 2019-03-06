@@ -22,7 +22,7 @@ namespace Programmer
     /// <summary>
     /// Логика взаимодействия для MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow : IView
     {
         private ModelVisual3D[,,] _models;
         private readonly MainWindowViewModel _viewModel;
@@ -32,13 +32,18 @@ namespace Programmer
         {
             InitializeComponent();
 
-            _viewModel = new MainWindowViewModel(Destroy);
+            _viewModel = new MainWindowViewModel(this);
 
             DataContext = _viewModel;
 
-            Create(14, 14, 14);
+            Start();
 
             PreviewKeyDown += OnPreviewKeyDown;
+        }
+
+        public void Start()
+        {
+            Create(14, 14, 14);
         }
 
         private void OnPreviewKeyDown(object sender, KeyEventArgs e)
@@ -98,7 +103,7 @@ namespace Programmer
             }
         }
 
-        private void Destroy(Point point)
+        public void Destroy(Point point)
         {
             point = new Point(point.X + _border, point.Y + _border, point.Z);
             if (point.X < 0 || point.X >= _models.GetLength(0) || point.Y < 0 || point.Y >= _models.GetLength(1) || point.Z < 0 || point.Z >= _models.GetLength(2))
@@ -164,16 +169,21 @@ namespace Programmer
         //        Destroy(new Point(x, y, z));
         //}
 
-        //private void Camera_OnValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
-        //{
-        //    if (CameraXpSlider == null)
-        //        return;
-        //    Console.WriteLine(CameraYZ.Value);
-        //    CameraXpSlider.Value = CameraR.Value * Math.Sin(CameraXY.Value) * Math.Cos(CameraYZ.Value);
-        //    CameraYpSlider.Value = CameraR.Value * Math.Sin(CameraXY.Value) * Math.Sin(CameraYZ.Value);
-        //    CameraZpSlider.Value = CameraR.Value * Math.Cos(CameraXY.Value);
-        //}
-    }
+		public void ShowMessageBox()
+		{
+			MessageBox.Show("Паз проделан.");
+		}
+
+		//private void Camera_OnValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+		//{
+		//    if (CameraXpSlider == null)
+		//        return;
+		//    Console.WriteLine(CameraYZ.Value);
+		//    CameraXpSlider.Value = CameraR.Value * Math.Sin(CameraXY.Value) * Math.Cos(CameraYZ.Value);
+		//    CameraYpSlider.Value = CameraR.Value * Math.Sin(CameraXY.Value) * Math.Sin(CameraYZ.Value);
+		//    CameraZpSlider.Value = CameraR.Value * Math.Cos(CameraXY.Value);
+		//}
+	}
 
 
 

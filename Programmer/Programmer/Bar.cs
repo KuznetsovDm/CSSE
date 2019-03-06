@@ -6,20 +6,29 @@ namespace Programmer
 {
 	public class Bar
 	{
-		private readonly bool[,,] _symbols;
+		private bool[,,] _symbols;
 
-		public int XLength => _symbols.GetLength(0);
-		public int YLength => _symbols.GetLength(1);
-		public int ZLength => _symbols.GetLength(2);
-		
+		public int XLength { get; }
+		public int YLength { get; }
+		public int ZLength { get; }
+
 		public Bar(int x, int y, int z)
 		{
-			_symbols = Initialize(x, y, z);
+			XLength = x;
+			YLength = y;
+			ZLength = z;
+
+			_symbols = Initialize();
 		}
 
-		private bool[,,] Initialize(int x, int y, int z)
+		public void Restart()
 		{
-			var symbols = new bool[x, y, z];
+			_symbols = Initialize();
+		}
+
+		private bool[,,] Initialize()
+		{
+			var symbols = new bool[XLength, YLength, ZLength];
 
 			for (var i = 0; i < symbols.GetLength(0); i++)
 			{
@@ -119,6 +128,9 @@ namespace Programmer
 
 		public bool GetValue(int x, int y, int z)
 		{
+			if (x >= XLength || y >= YLength || z >= ZLength)
+				return false;
+
 			return _symbols[x, y, z];
 		}
 
