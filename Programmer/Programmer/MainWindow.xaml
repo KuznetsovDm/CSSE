@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:Programmer"
         xmlns:system="clr-namespace:System;assembly=mscorlib"
         mc:Ignorable="d" d:DataContext="{d:DesignInstance {x:Type local:MainWindowViewModel}}"
-        Title="MainWindow" MinHeight="260" MinWidth="600" Height="1192" Width="1874" WindowState="Maximized" WindowStyle="ToolWindow">
+        Title="Программатор" MinHeight="260" MinWidth="600" Height="1192" Width="1874" WindowState="Maximized" WindowStyle="ToolWindow">
     <Window.Resources>
         <local:ToVector3DConverter x:Key="Vector3DConverter" />
         <local:ToPoint3DConverter x:Key="Point3DConverter" />
@@ -209,7 +209,9 @@
             </StackPanel>
 
             <TextBlock Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2">
-                Управляющие клавиши: A-автоформат, Р-ручной, Н-настройка, П-пуск, Ш-шаг, С- стоп, К-конец работы
+                <Run>Управляющие клавиши: A-автоформат, Р-ручной, Н-настройка, </Run>
+                <LineBreak />
+                <Run>П-пуск, Ш-шаг, С- стоп, К-конец работы</Run>
             </TextBlock>
         </Grid>
     </Grid>
