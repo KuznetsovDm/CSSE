@@ -128,7 +128,7 @@ namespace Programmer
 
 		public bool GetValue(int x, int y, int z)
 		{
-			if (x > XLength || y > YLength || z > ZLength)
+			if (x > XLength || y > YLength || z > ZLength || x < 0 || y < 0 || z < 0)
 				return false;
 
 			return _symbols[x, y, z];

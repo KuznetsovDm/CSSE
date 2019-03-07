@@ -90,7 +90,7 @@ namespace Programmer
                     }
                     else
                     {
-                        if (_currentX > 0)
+                        if (_currentX >= 0)
                             _currentX--;
                         else
                             tickData.Finished = true;
@@ -106,7 +106,7 @@ namespace Programmer
                     }
                     else
                     {
-                        if (_currentX > 0)
+                        if (_currentX >= 0)
                             _currentX--;
                         else
                             tickData.Finished = true;

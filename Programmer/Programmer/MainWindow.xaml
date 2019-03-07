@@ -196,8 +196,8 @@
 
                 </StackPanel>
             </Border>
-
-            <StackPanel Grid.Row="1" Grid.Column="1" MinWidth="400">
+            <!--Видимость текста-->
+            <StackPanel Grid.Row="1" Grid.Column="1" MinWidth="400" Visibility="Collapsed">
                 <TextBlock Text="МОДЕЛЬ СТРОГАНИЯ" HorizontalAlignment="Center" />
 
                 <TextBlock Text="Vertical"></TextBlock>
