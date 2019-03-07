@@ -21,82 +21,98 @@ namespace Programmer
 			Settings = settings ?? new ProgrammatorSettings();
 		}
 
-		private static int GetDelta(int current, int max, int barLength)
+		private static int GetDelta(int current, int barLength)
 		{
-			var left = barLength - current;
-			return max > left ? left : max;
+            return 1 + current > barLength ? 0 : 1;
 		}
-
-		public Point Tick()
-		{
-			var dx = GetDelta(_currentX, Settings.XMax, _bar.XLength);
-			var dy = GetDelta(_currentY, Settings.YMax, _bar.YLength);
-			var dz = GetDelta(_currentZ, Settings.ZMax, _bar.ZLength);
-
-			Cut(_bar, _currentX, _currentY, _currentZ, dx, dy, dz);
-
-			if (dy != 0)
-			{
-				_currentY += dy;
-			}
-			else if (dx != 0 && _currentX + dx < _bar.XLength)
-			{
-				_currentX += dx;
-				_currentY = 0;
-			}
-			else if (dz != 0 && _currentZ + dz < _bar.ZLength)
-			{
-				_currentZ += dz;
-				_currentY = 0;
-				_currentX = 0;
-			}
-			else
-			{
-				_currentZ = 0;
-				_currentY = 0;
-				_currentX = 0;
-			}
-
-			return new Point(_currentX, _currentY, _currentZ);
-		}
-
+       
 		public TickData TickVersion2()
 		{
 			var tickData = new TickData();
+			var xMax = Settings.XMax > _bar.XLength ? _bar.XLength : Settings.XMax;
+			var yMax = Settings.YMax > _bar.YLength ? _bar.YLength : Settings.YMax;
+			var zMax = Settings.ZMax > _bar.ZLength ? _bar.ZLength : Settings.ZMax;
 
-			var xMax = Settings.XMax == 0 ? _bar.XLength : Settings.XMax;
-			var yMax = Settings.YMax == 0 ? _bar.YLength : Settings.YMax;
-			var zMax = Settings.ZMax == 0 ? _bar.ZLength : Settings.ZMax;
-
-			var dx = GetDelta(_currentX, 1, xMax);
-			var dy = GetDelta(_currentY, 1, yMax);
-			var dz = GetDelta(_currentZ, 1, zMax);
+            var dx = GetDelta(_currentX, xMax);
+			var dy = GetDelta(_currentY, yMax);
+			var dz = GetDelta(_currentZ, zMax);
 
 			tickData.DeletedPoint = Cut(_bar, _currentX, _currentY, _currentZ, dx, dy, dz).FirstOrDefault();
 
-			if (dx != 0)
-			{
-				_currentX += dx;
-			}
-			else if (dy != 0 && _currentY + dy < yMax)
-			{
-				_currentY += dy;
-				_currentX = 0;
-			}
-			else if (dz != 0 && _currentZ + dz < zMax)
-			{
-				_currentZ += dz;
-				_currentY = 0;
-				_currentX = 0;
-			}
-			else
-			{
-				_currentZ = 0;
-				_currentY = 0;
-				_currentX = 0;
-				tickData.Finished = true;
-			}
-			
+            if ((_currentY + _currentZ & 1) == 0)
+            {
+                if (_currentX < xMax - 1)
+                    _currentX++;
+                else if ((_currentZ & 1) == 0)
+                {
+                    if (_currentY < yMax - 1)
+                        _currentY++;
+                    else if (_currentZ < zMax - 1)
+                    {
+                        _currentZ++;
+                    }
+                    else
+                    {
+                        if (_currentX < xMax)
+                            _currentX++;
+                        else
+                            tickData.Finished = true;
+                    }      
+                }
+                else
+                {
+                    if (_currentY > 0)
+                        _currentY--;
+                    else if (_currentZ < zMax - 1)
+                    {
+                        _currentZ++;
+                    }
+                    else
+                    {
+                        if (_currentX < xMax)
+                            _currentX++;
+                        else
+                            tickData.Finished = true;
+                    }
+                }
+            }
+            else
+            {
+                if (_currentX > 0)
+                    _currentX--;
+                else if ((_currentZ & 1) == 0)
+                {
+                    if (_currentY < yMax - 1)
+                        _currentY++;
+                    else if (_currentZ < zMax - 1)
+                    {
+                        _currentZ++;
+                    }
+                    else
+                    {
+                        if (_currentX > 0)
+                            _currentX--;
+                        else
+                            tickData.Finished = true;
+                    }
+                }
+                else
+                {
+                    if (_currentY > 0)
+                        _currentY--;
+                    else if (_currentZ < zMax - 1)
+                    {
+                        _currentZ++;
+                    }
+                    else
+                    {
+                        if (_currentX > 0)
+                            _currentX--;
+                        else
+                            tickData.Finished = true;
+                    }
+                }
+            }
 			return tickData;
 		}
 
@@ -109,10 +125,10 @@ namespace Programmer
 
 		private static IEnumerable<Point> Cut(Bar bar, int currentX, int currentY, int currentZ, int dx, int dy, int dz)
 		{
-			for (var i = currentX; i < currentX + dx; i++)
+            for (var k = currentZ; k < currentZ + dz; k++)
 				for (var j = currentY; j < currentY + dy; j++)
-					for (var k = currentZ; k < currentZ + dz; k++)
-					{
+                    for (var i = currentX; i < currentX + dx; i++)
+                    {
 						if (!bar.GetValue(i, j, k)) yield return null;
 						bar.SetValue(i, j, k, false);
 						yield return new Point(i, j, k);
